@@ -39,13 +39,27 @@ export default function HomePage() {
     setLoading(true)
     setErrorMsg(null)
     try {
-      const [guestsRes, statsRes] = await Promise.all([
-        supabase.from('guests_public').select('*').order('recorded_at', { ascending: false }),
-        supabase.rpc('get_dashboard_stats'),
-      ])
-      if (guestsRes.error) throw guestsRes.error
+      async function fetchAllGuests() {
+        const CHUNK = 1000
+        let all: GuestPublic[] = []
+        let from = 0
+        while (true) {
+          const { data, error } = await supabase
+            .from('guests_public')
+            .select('*')
+            .order('recorded_at', { ascending: false })
+            .range(from, from + CHUNK - 1)
+          if (error) throw error
+          all = all.concat((data as GuestPublic[]) || [])
+          if (!data || data.length < CHUNK) break
+          from += CHUNK
+        }
+        return all
+      }
+
+      const [allGuests, statsRes] = await Promise.all([fetchAllGuests(), supabase.rpc('get_dashboard_stats')])
       if (statsRes.error) throw statsRes.error
-      setGuests((guestsRes.data as GuestPublic[]) || [])
+      setGuests(allGuests)
       setStats(statsRes.data as DashboardStats)
     } catch (err) {
       setErrorMsg(err instanceof Error ? err.message : 'Gagal memuat data.')
