@@ -4,7 +4,7 @@
 import { useState } from 'react'
 import { supabase } from '@/lib/supabase/client'
 import { GuestPublic, SIDE_LABELS } from '@/lib/types'
-import { LockIcon, PencilIcon, TrashIcon } from '@/components/icons'
+import { LockIcon, PencilIcon, TrashIcon, GiftIcon } from '@/components/icons'
 
 function formatRupiah(n: number) {
   return 'Rp ' + n.toLocaleString('id-ID')
@@ -52,34 +52,41 @@ export default function GuestDetailModal({
     ['Kecamatan', guest.subdistrict],
     ['Kabupaten/Kota', guest.district],
     ['No. HP', guest.phone],
-    ['Barang', guest.gift_item],
     ['Catatan', guest.notes],
   ]
 
   return (
     <div
-      className="fixed inset-0 z-[100] bg-emerald-900/50 backdrop-blur-sm flex items-end sm:items-center justify-center"
+      className="fixed inset-0 z-[100] bg-emerald-900/50 backdrop-blur-sm flex items-center justify-center p-4"
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
-      <div className="w-full sm:max-w-[420px] max-h-[90vh] overflow-y-auto bg-white rounded-t-[24px] sm:rounded-[24px] p-7 shadow-hero">
+      <div className="w-full sm:max-w-[420px] max-h-[85vh] overflow-y-auto bg-white rounded-[24px] p-7 shadow-hero">
         <button onClick={onClose} className="float-right text-2xl text-ivory-400 hover:text-ivory-900 transition-colors" aria-label="Tutup">
           &times;
         </button>
         <p className="font-heading font-bold text-[24px] text-emerald-700 mb-1">{guest.guest_name}</p>
         <p className="text-ivory-600 text-sm mb-5">Detail tamu.</p>
 
-        <div className="font-body font-bold text-[28px] text-emerald-700 mb-5">
+        <div className="mb-5">
           {guest.amount_hidden ? (
-            <span className="inline-flex items-center gap-2">
+            <div className="font-body font-bold text-[28px] text-emerald-700 inline-flex items-center gap-2">
               <LockIcon className="w-6 h-6" />
               Login buat lihat nominal
-            </span>
-          ) : guest.amount && guest.amount > 0 ? (
-            formatRupiah(guest.amount)
-          ) : guest.gift_item ? (
-            'Barang'
+            </div>
           ) : (
-            'Rp 0'
+            <>
+              {guest.amount && guest.amount > 0 ? (
+                <div className="font-body font-bold text-[28px] text-emerald-700">{formatRupiah(guest.amount)}</div>
+              ) : !guest.gift_item ? (
+                <div className="font-body font-bold text-[28px] text-emerald-700">Rp 0</div>
+              ) : null}
+              {guest.gift_item && (
+                <div className="flex items-center gap-1.5 text-[15px] text-copper-700 font-semibold mt-1">
+                  <GiftIcon className="w-4 h-4 flex-shrink-0" />
+                  {guest.gift_item}
+                </div>
+              )}
+            </>
           )}
         </div>
 

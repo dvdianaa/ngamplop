@@ -2,8 +2,8 @@
 export type Side = 'dvdianaa' | 'sahlan'
 
 export const SIDE_LABELS: Record<Side, string> = {
-  dvdianaa: 'dvdianaa',
-  sahlan: 'sahlan',
+  dvdianaa: 'Devi Diana Agustin',
+  sahlan: 'Sahlan',
 }
 
 export interface GuestPublic {

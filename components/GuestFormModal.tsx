@@ -4,19 +4,22 @@
 import { useState } from 'react'
 import { supabase } from '@/lib/supabase/client'
 import { GuestPublic, SIDE_LABELS, Side } from '@/lib/types'
+import { LockIcon } from '@/components/icons'
 
 export default function GuestFormModal({
   guest,
+  lockedSide,
   onClose,
   onSaved,
 }: {
   guest?: GuestPublic
+  lockedSide?: Side
   onClose: () => void
   onSaved: () => void
 }) {
   const isEdit = !!guest
 
-  const [side, setSide] = useState<Side>(guest?.side || 'dvdianaa')
+  const [side, setSide] = useState<Side>(lockedSide || guest?.side || 'dvdianaa')
   const [guestName, setGuestName] = useState(guest?.guest_name || '')
   const [alias, setAlias] = useState(guest?.alias || '')
   const [address, setAddress] = useState(guest?.address || '')
@@ -70,10 +73,10 @@ export default function GuestFormModal({
 
   return (
     <div
-      className="fixed inset-0 z-[100] bg-emerald-900/50 backdrop-blur-sm flex items-end sm:items-center justify-center"
+      className="fixed inset-0 z-[100] bg-emerald-900/50 backdrop-blur-sm flex items-center justify-center p-4"
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
-      <div className="w-full sm:max-w-[420px] max-h-[90vh] overflow-y-auto bg-white rounded-t-[24px] sm:rounded-[24px] p-7 shadow-hero">
+      <div className="w-full sm:max-w-[420px] max-h-[85vh] overflow-y-auto bg-white rounded-[24px] p-7 shadow-hero">
         <button onClick={onClose} className="float-right text-2xl text-ivory-400 hover:text-ivory-900 transition-colors" aria-label="Tutup">
           &times;
         </button>
@@ -99,15 +102,22 @@ export default function GuestFormModal({
         />
 
         <label className="block text-sm font-semibold mb-1.5">Pihak</label>
-        <select
-          value={side}
-          onChange={(e) => setSide(e.target.value as Side)}
-          className="w-full border border-ivory-200 rounded-xl px-3.5 py-3 text-[15px] bg-ivory-50 mb-3.5 focus:outline-none focus:ring-2 focus:ring-copper-300"
-        >
-          {(Object.keys(SIDE_LABELS) as Side[]).map((s) => (
-            <option key={s} value={s}>{SIDE_LABELS[s]}</option>
-          ))}
-        </select>
+        {lockedSide ? (
+          <div className="w-full border border-ivory-200 rounded-xl px-3.5 py-3 text-[15px] bg-ivory-100 text-ivory-600 mb-3.5 flex items-center gap-2">
+            <LockIcon className="w-4 h-4 flex-shrink-0" />
+            {SIDE_LABELS[lockedSide]}
+          </div>
+        ) : (
+          <select
+            value={side}
+            onChange={(e) => setSide(e.target.value as Side)}
+            className="w-full border border-ivory-200 rounded-xl px-3.5 py-3 text-[15px] bg-ivory-50 mb-3.5 focus:outline-none focus:ring-2 focus:ring-copper-300"
+          >
+            {(Object.keys(SIDE_LABELS) as Side[]).map((s) => (
+              <option key={s} value={s}>{SIDE_LABELS[s]}</option>
+            ))}
+          </select>
+        )}
 
         <label className="block text-sm font-semibold mb-1.5">Daerah</label>
         <input

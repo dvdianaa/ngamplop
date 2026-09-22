@@ -1,6 +1,6 @@
 // components/GuestCard.tsx
 import { GuestPublic, SIDE_LABELS } from '@/lib/types'
-import { EyeIcon, LockIcon } from '@/components/icons'
+import { EyeIcon, LockIcon, GiftIcon } from '@/components/icons'
 
 function formatRupiah(n: number) {
   return 'Rp ' + n.toLocaleString('id-ID')
@@ -27,7 +27,7 @@ export default function GuestCard({
 
   return (
     <div
-      className="fade-up bg-white border border-ivory-200 rounded-2xl px-4 py-3.5 flex flex-wrap items-center gap-x-3.5 gap-y-2 shadow-card hover:border-copper-300 transition-colors"
+      className="fade-up relative bg-white border border-ivory-200 rounded-2xl px-4 py-3.5 flex flex-wrap items-center gap-x-3.5 gap-y-2 shadow-card hover:border-copper-300 transition-colors"
       style={{ animationDelay: `${Math.min(index, 8) * 35}ms` }}
     >
       <div className="flex items-center gap-3.5 flex-1 min-w-[180px]">
@@ -53,27 +53,39 @@ export default function GuestCard({
         </div>
       </div>
 
-      <div className="flex items-center gap-2 flex-shrink-0 ml-auto">
+      <div className={`flex items-center flex-shrink-0 ml-auto ${editable ? 'pr-10' : ''}`}>
         {g.amount_hidden ? (
           <span className="text-xs font-semibold text-ivory-600 bg-ivory-100 rounded-full px-3 py-1.5 whitespace-nowrap flex items-center gap-1 flex-shrink-0">
             <LockIcon className="w-3 h-3" />
             Login
           </span>
         ) : (
-          <div className="font-body font-bold text-[17px] text-emerald-700 whitespace-nowrap flex-shrink-0">
-            {g.amount && g.amount > 0 ? formatRupiah(g.amount) : g.gift_item ? 'Barang' : 'Rp 0'}
+          <div className="flex flex-col items-end gap-0.5 flex-shrink-0">
+            {g.amount && g.amount > 0 ? (
+              <div className="font-body font-bold text-[17px] text-emerald-700 whitespace-nowrap">
+                {formatRupiah(g.amount)}
+              </div>
+            ) : !g.gift_item ? (
+              <div className="font-body font-bold text-[17px] text-emerald-700 whitespace-nowrap">Rp 0</div>
+            ) : null}
+            {g.gift_item && (
+              <div className="flex items-center gap-1 text-[11.5px] text-copper-700 font-semibold whitespace-nowrap max-w-[160px] truncate">
+                <GiftIcon className="w-3 h-3 flex-shrink-0" />
+                {g.gift_item}
+              </div>
+            )}
           </div>
         )}
-        {editable && (
-          <button
-            onClick={onView}
-            aria-label="Lihat detail"
-            className="w-8 h-8 rounded-lg flex items-center justify-center text-ivory-600 hover:bg-ivory-100 hover:text-emerald-700 transition-colors flex-shrink-0"
-          >
-            <EyeIcon className="w-[18px] h-[18px]" />
-          </button>
-        )}
       </div>
+      {editable && (
+        <button
+          onClick={onView}
+          aria-label="Lihat detail"
+          className="absolute right-4 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg flex items-center justify-center text-ivory-600 hover:bg-ivory-100 hover:text-emerald-700 transition-colors"
+        >
+          <EyeIcon className="w-[18px] h-[18px]" />
+        </button>
+      )}
     </div>
   )
 }

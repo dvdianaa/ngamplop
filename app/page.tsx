@@ -24,6 +24,8 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [session, setSession] = useState(false)
+  const [myRole, setMyRole] = useState<string | null>(null)
+  const [mySide, setMySide] = useState<string | null>(null)
   const [showLogin, setShowLogin] = useState(false)
   const [viewingGuest, setViewingGuest] = useState<GuestPublic | null>(null)
   const [editingGuest, setEditingGuest] = useState<GuestPublic | null>(null)
@@ -68,15 +70,34 @@ export default function HomePage() {
     }
   }, [])
 
+  function applySession(s: { user?: { user_metadata?: any } } | null) {
+    setSession(!!s)
+    setMyRole(s?.user?.user_metadata?.role || null)
+    setMySide(s?.user?.user_metadata?.side || null)
+  }
+
+  function canEditSide(side: string) {
+    if (myRole === 'admin') return true
+    if ((myRole === 'member' || myRole === 'manager') && mySide === side) return true
+    return false
+  }
+
+  const lockedSide = (myRole === 'member' || myRole === 'manager') && mySide ? (mySide as Side) : undefined
+  const lockedFilterSide = myRole === 'member' && mySide ? mySide : null
+
+  useEffect(() => {
+    if (lockedFilterSide) setSideFilter(lockedFilterSide)
+  }, [lockedFilterSide])
+
   useEffect(() => {
     if (!isConfigured) {
       setLoading(false)
       return
     }
-    supabase.auth.getSession().then(({ data }) => setSession(!!data.session))
+    supabase.auth.getSession().then(({ data }) => applySession(data.session))
     loadData()
     const { data: sub } = supabase.auth.onAuthStateChange((_e, sessionData) => {
-      setSession(!!sessionData)
+      applySession(sessionData)
       loadData()
     })
     return () => sub.subscription.unsubscribe()
@@ -204,12 +225,14 @@ export default function HomePage() {
               <div className="text-[12.5px] text-ivory-600 tracking-wide mb-1">BUKU TAMU</div>
               <h1 className="font-heading font-bold text-[28px] lg:text-[32px] text-emerald-700">Daftar Sumbangan</h1>
             </div>
-            <button
-              onClick={() => setShowAddGuest(true)}
-              className="self-start sm:self-auto flex-shrink-0 text-sm font-semibold bg-copper-500 text-emerald-900 rounded-xl px-4 py-2.5 hover:bg-copper-300 transition-colors"
-            >
-              + Tambah Tamu
-            </button>
+            {session && (
+              <button
+                onClick={() => setShowAddGuest(true)}
+                className="self-start sm:self-auto flex-shrink-0 text-sm font-semibold bg-copper-500 text-emerald-900 rounded-xl px-4 py-2.5 hover:bg-copper-300 transition-colors"
+              >
+                + Tambah Tamu
+              </button>
+            )}
           </div>
 
           {loading && (
@@ -254,11 +277,11 @@ export default function HomePage() {
                   {!session && (
                     <div className="text-[12px] opacity-80 mt-4 relative">
                       <LockIcon className="w-3.5 h-3.5 inline-block align-[-2px] mr-1" />
-                      Sebagian nominal ({SIDE_LABELS.dvdianaa}) disembunyikan.{' '}
+                      Sebagian nominal disembunyikan.{' '}
                       <button onClick={() => setShowLogin(true)} className="underline font-semibold">
                         Masuk
                       </button>{' '}
-                      buat lihat semua.
+                      pakai akun yang sesuai buat lihat.
                     </div>
                   )}
                 </div>
@@ -292,21 +315,27 @@ export default function HomePage() {
                   className="w-full text-[15.5px] bg-transparent outline-none placeholder:text-ivory-400"
                 />
                 <div className="flex gap-2 mt-3 flex-wrap">
-                  <div className="relative flex-1 min-w-[120px]">
-                    <select
-                      value={sideFilter}
-                      onChange={(e) => setSideFilter(e.target.value)}
-                      className="appearance-none w-full bg-emerald-700 text-copper-500 font-semibold rounded-xl pl-3.5 pr-8 py-2.5 text-[13.5px]"
-                    >
-                      <option value="">Semua pihak</option>
-                      {(Object.keys(SIDE_LABELS) as Side[]).map((s) => (
-                        <option key={s} value={s}>{SIDE_LABELS[s]}</option>
-                      ))}
-                    </select>
-                    <ChevronDownIcon className="w-3.5 h-3.5 text-copper-500 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-                  </div>
-                  <RegionFilterDropdown value={daerahFilter} onChange={setDaerahFilter} options={daerahOptions} />
-                  <div className="relative flex-1 min-w-[120px]">
+                  {lockedFilterSide ? (
+                    <div className="order-1 flex-1 min-w-[120px] flex items-center gap-2 bg-emerald-700 text-copper-500 font-semibold rounded-xl pl-3.5 pr-3.5 py-2.5 text-[13.5px]">
+                      <LockIcon className="w-3.5 h-3.5 flex-shrink-0" />
+                      {SIDE_LABELS[lockedFilterSide as Side]}
+                    </div>
+                  ) : (
+                    <div className="order-1 relative flex-1 min-w-[120px]">
+                      <select
+                        value={sideFilter}
+                        onChange={(e) => setSideFilter(e.target.value)}
+                        className="appearance-none w-full bg-emerald-700 text-copper-500 font-semibold rounded-xl pl-3.5 pr-8 py-2.5 text-[13.5px]"
+                      >
+                        <option value="">Semua pihak</option>
+                        {(Object.keys(SIDE_LABELS) as Side[]).map((s) => (
+                          <option key={s} value={s}>{SIDE_LABELS[s]}</option>
+                        ))}
+                      </select>
+                      <ChevronDownIcon className="w-3.5 h-3.5 text-copper-500 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    </div>
+                  )}
+                  <div className="order-2 sm:order-3 relative flex-1 min-w-[120px]">
                     <select
                       value={sortMode}
                       onChange={(e) => setSortMode(e.target.value as typeof sortMode)}
@@ -319,6 +348,12 @@ export default function HomePage() {
                     </select>
                     <ChevronDownIcon className="w-3.5 h-3.5 text-copper-500 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                   </div>
+                  <RegionFilterDropdown
+                    value={daerahFilter}
+                    onChange={setDaerahFilter}
+                    options={daerahOptions}
+                    className="order-3 sm:order-2"
+                  />
                 </div>
               </div>
 
@@ -392,7 +427,7 @@ export default function HomePage() {
       {viewingGuest && (
         <GuestDetailModal
           guest={viewingGuest}
-          editable={session}
+          editable={canEditSide(viewingGuest.side)}
           onClose={() => setViewingGuest(null)}
           onEdit={() => {
             setEditingGuest(viewingGuest)
@@ -404,6 +439,7 @@ export default function HomePage() {
       {(editingGuest || showAddGuest) && (
         <GuestFormModal
           guest={editingGuest || undefined}
+          lockedSide={lockedSide}
           onClose={() => {
             setEditingGuest(null)
             setShowAddGuest(false)

@@ -39,6 +39,18 @@ export function ChevronDownIcon({ className }: IconProps) {
   )
 }
 
+export function GiftIcon({ className }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <rect x="3.5" y="9" width="17" height="4.5" rx="1" />
+      <path d="M5 13.5v7a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-7" />
+      <path d="M12 9v12.5" />
+      <path d="M12 9c-1-3-3-4.5-4.5-4.5A2.25 2.25 0 0 0 5.5 6.75c0 1.5 1 2.25 2 2.25" />
+      <path d="M12 9c1-3 3-4.5 4.5-4.5A2.25 2.25 0 0 1 18.5 6.75c0 1.5-1 2.25-2 2.25" />
+    </svg>
+  )
+}
+
 export function LockIcon({ className }: IconProps) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className}>

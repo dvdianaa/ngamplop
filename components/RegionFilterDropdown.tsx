@@ -9,10 +9,12 @@ export default function RegionFilterDropdown({
   value,
   onChange,
   options,
+  className,
 }: {
   value: string
   onChange: (v: string) => void
   options: string[]
+  className?: string
 }) {
   const [open, setOpen] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -31,7 +33,7 @@ export default function RegionFilterDropdown({
   const filteredOptions = q === '' ? options : options.filter((d) => d.toUpperCase().includes(q))
 
   return (
-    <div className="relative flex-1 min-w-[120px]" ref={containerRef}>
+    <div className={`relative flex-1 min-w-[120px] ${className || ''}`} ref={containerRef}>
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
