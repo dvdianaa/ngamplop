@@ -39,7 +39,7 @@ export default function HomePage() {
     setLoading(true)
     setErrorMsg(null)
     try {
-      async function fetchAllGuests() {
+      const fetchAllGuests = async () => {
         const CHUNK = 1000
         let all: GuestPublic[] = []
         let from = 0
