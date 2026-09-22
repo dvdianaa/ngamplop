@@ -15,9 +15,25 @@ const plexSans = IBM_Plex_Sans({
   variable: '--font-plex-sans',
 })
 
+const SITE_URL = 'https://dvdianaa.github.io/ngamplop'
+
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: 'Ngamplop — Buku Tamu',
   description: 'Catatan sumbangan tamu hajatan, dicari dan direkap otomatis.',
+  openGraph: {
+    title: 'Ngamplop — Buku Tamu',
+    description: 'Catatan sumbangan tamu hajatan, dicari dan direkap otomatis.',
+    url: SITE_URL,
+    siteName: 'Ngamplop',
+    locale: 'id_ID',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Ngamplop — Buku Tamu',
+    description: 'Catatan sumbangan tamu hajatan, dicari dan direkap otomatis.',
+  },
 }
 
 export const viewport = {
