@@ -1,0 +1,35 @@
+// app/layout.tsx
+import type { Metadata } from 'next'
+import { Cormorant_Garamond, IBM_Plex_Sans } from 'next/font/google'
+import './globals.css'
+
+const cormorant = Cormorant_Garamond({
+  subsets: ['latin'],
+  weight: ['500', '600', '700'],
+  variable: '--font-cormorant',
+})
+
+const plexSans = IBM_Plex_Sans({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-plex-sans',
+})
+
+export const metadata: Metadata = {
+  title: 'Ngamplop — Buku Tamu',
+  description: 'Catatan sumbangan tamu hajatan, dicari dan direkap otomatis.',
+}
+
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
+}
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="id" className={`${cormorant.variable} ${plexSans.variable}`}>
+      <body className="bg-ivory-100 text-ivory-900 font-body">{children}</body>
+    </html>
+  )
+}
