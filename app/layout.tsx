@@ -21,10 +21,10 @@ const SITE_URL = `${SITE_ORIGIN}/ngamplop`
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_ORIGIN),
   title: 'Ngamplop — Buku Tamu',
-  description: 'Catatan sumbangan tamu hajatan, dicari dan direkap otomatis.',
+  description: 'Sistem pencatatan tamu dan sumbangan hajatan yang rapi, tersimpan aman, dan mudah dicari kapan saja.',
   openGraph: {
     title: 'Ngamplop — Buku Tamu',
-    description: 'Catatan sumbangan tamu hajatan, dicari dan direkap otomatis.',
+    description: 'Sistem pencatatan tamu dan sumbangan hajatan yang rapi, tersimpan aman, dan mudah dicari kapan saja.',
     url: SITE_URL,
     siteName: 'Ngamplop',
     locale: 'id_ID',
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Ngamplop — Buku Tamu',
-    description: 'Catatan sumbangan tamu hajatan, dicari dan direkap otomatis.',
+    description: 'Sistem pencatatan tamu dan sumbangan hajatan yang rapi, tersimpan aman, dan mudah dicari kapan saja.',
   },
 }
 
