@@ -25,3 +25,6 @@ yarn-error.log*
 
 # local dev tooling (not part of the app)
 /.claude/
+
+# one-off admin scripts (contain user IDs / need service role key, never commit)
+/set-roles.mjs
